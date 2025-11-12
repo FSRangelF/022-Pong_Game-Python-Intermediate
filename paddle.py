@@ -7,7 +7,7 @@ class Paddle(Turtle):
         self.step = default_step
         self.color("white")
         self.speed("fastest")
-        self.shapesize(stretch_len=4, stretch_wid=1, outline=10)
+        self.shapesize(stretch_len=4, stretch_wid=1, outline=1)
         self.penup()
         self.setheading(90)
         self.teleport(x=initial_x, y=initial_y)

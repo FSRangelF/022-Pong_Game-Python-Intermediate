@@ -1,19 +1,29 @@
 from turtle import Turtle
 
+ALIGMENT = "center"
+FONT = ("Courier", 72, "bold")
+
 class Score(Turtle):
 
-    def __init__(self, shape = "classic", undobuffersize = 1000, visible = False):
+    def __init__(self, screen_height, initial_x, shape = "classic", undobuffersize = 1000, visible = False):
         super().__init__(shape, undobuffersize, visible)
+        self.score = 0
+        self.color("white")
+        self.hideturtle()
+        self.teleport(x=initial_x, y=(screen_height/2-120))  
+        self.refresh_score()
 
+    def increase_score(self):
+        self.score += 1
+        self.refresh_score()
 
-
-
-
-
-
-
-
-
+    def refresh_score(self):
+        self.clear()
+        self.write(arg=f"{self.score}",  align=ALIGMENT, font=FONT)
+    
+    def game_over(self):
+        self.teleport(0,0)
+        self.write(arg="GAME OVER",  align=ALIGMENT, font=FONT)
 
 class Line(Turtle):
 
