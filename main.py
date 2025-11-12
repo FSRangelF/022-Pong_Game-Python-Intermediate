@@ -4,40 +4,42 @@ from scoreboard import Score, Line
 from paddle import Paddle
 import time
 
-SCREENSIZE_X = 1200
-SCREENSIZE_Y = 800
+SCREENSIZE_X = 800
+SCREENSIZE_Y = 600
 DELAY = 0.05
-MOVE_STEP = 30
-BALL_SPEED = 20
+MOVE_STEP = 40
+DETECTION_TRESHOLD = 50
+SPACER = 20
+game_over = False
+ball_speed = 10
 
 # setup screen
 screen = Screen()
 screen.setup(width=SCREENSIZE_X, height=SCREENSIZE_Y)
 screen.bgcolor("black")
-screen.title("Snake Game")
+screen.title("Pong")
 screen.tracer(0)
 
-paddle_1 = Paddle(default_step=MOVE_STEP, initial_x=(SCREENSIZE_X/2)-40, initial_y=0 )
-paddle_2 = Paddle(default_step=MOVE_STEP, initial_x=(-SCREENSIZE_X/2)+40, initial_y=0 )
+paddle_1 = Paddle(default_step=MOVE_STEP, initial_x=(SCREENSIZE_X/2)-SPACER, screen_height=SCREENSIZE_Y)
+paddle_2 = Paddle(default_step=MOVE_STEP, initial_x=(-SCREENSIZE_X/2)+SPACER, screen_height=SCREENSIZE_Y)
 
 line = Line(screen_height=SCREENSIZE_Y)
 
-score_1 = Score(screen_height=SCREENSIZE_Y, initial_x=100)
-score_2 = Score(screen_height=SCREENSIZE_Y, initial_x=-100)
+score_1 = Score(screen_height=SCREENSIZE_Y, initial_x=5*SPACER)
+score_2 = Score(screen_height=SCREENSIZE_Y, initial_x=-5*SPACER)
 
-ball = Ball(default_step=BALL_SPEED)
+ball = Ball(default_step=ball_speed)
 
-game_over = False
+# Control direction
+screen.listen()
+screen.onkeypress(key="Up", fun=paddle_1.up)
+screen.onkeypress(key="Down", fun=paddle_1.down)
+screen.onkeypress(key="w", fun=paddle_2.up)
+screen.onkeypress(key="s", fun=paddle_2.down)
 
 while not game_over:
     screen.update()
     ball.move()
-    # Control direction
-    screen.listen()
-    screen.onkeypress(key="Up", fun=paddle_1.up)
-    screen.onkeypress(key="Down", fun=paddle_1.down)
-    screen.onkeypress(key="w", fun=paddle_2.up)
-    screen.onkeypress(key="s", fun=paddle_2.down)
 
     # detect score
     if ball.xcor() <= -SCREENSIZE_X/2:
@@ -49,15 +51,15 @@ while not game_over:
         ball.reset_pos()
 
     # detect collision with wall
-    if ball.ycor() >= SCREENSIZE_Y/2 or ball.ycor() <= -SCREENSIZE_Y/2: 
+    if ball.ycor() >= SCREENSIZE_Y/2 - SPACER or ball.ycor() <= -SCREENSIZE_Y/2 + SPACER:  
         ball.bounce_wall()
 
     # detect collision with paddle_1
-    if ball.xcor() >= paddle_1.xcor()-20 and ball.distance(paddle_1) < 40 : 
+    if ball.xcor() >= paddle_1.xcor()-SPACER and ball.distance(paddle_1) < DETECTION_TRESHOLD : 
         ball.bounce_paddle()
 
     # detect collision with paddle_2
-    if ball.xcor() <= paddle_2.xcor()+20 and ball.distance(paddle_2) < 40 : 
+    if ball.xcor() <= paddle_2.xcor()+SPACER and ball.distance(paddle_2) < DETECTION_TRESHOLD : 
        ball.bounce_paddle()
 
     # game over condition
